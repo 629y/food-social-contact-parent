@@ -12,4 +12,10 @@ public class HelloController {
     public String hello(String name){
         return "hello " + name;
     }
+
+//    public static void main(String[] args) {
+//        System.out.println(5/2);
+//        System.out.println(Math.floor(4.5));
+//        System.out.println(Math.ceil(4.5));
+//    }
 }
