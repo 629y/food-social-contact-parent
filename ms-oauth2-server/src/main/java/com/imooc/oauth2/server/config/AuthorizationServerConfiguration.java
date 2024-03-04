@@ -1,6 +1,7 @@
 package com.imooc.oauth2.server.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -8,6 +9,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.annotation.Resource;
 
@@ -26,6 +28,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Resource
     private PasswordEncoder passwordEncoder;
 
+    // 认证管理对象
+    @Resource
+    private AuthenticationManager authenticationManager;
+
+    @Resource
+    private RedisTokenStore redisTokenStore;
 
     /**
      * 配置令牌端点安全约束
@@ -55,8 +63,27 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .scopes(clientOAuth2DataConfiguration.getScopes()); // 客户端访问范围
     }
 
+    /**
+     * 配置授权以及令牌的访问端点和令牌服务
+     * @param endpoints the endpoints configurer
+     * @throws Exception
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        super.configure(endpoints);
+        // 认证器
+        endpoints.authenticationManager(authenticationManager)
+                // 具体登录的方法
+                .userDetailsService()
+                // token 存储的方式：Redis
+                .tokenStore(redisTokenStore);
     }
+
+
+
+
+
+
+
+
+
 }
