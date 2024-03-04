@@ -1,5 +1,6 @@
 package com.imooc.oauth2.server.config;
 
+import com.imooc.oauth2.server.service.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,8 +33,13 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Resource
     private AuthenticationManager authenticationManager;
 
+    // RedisTokenSore
     @Resource
     private RedisTokenStore redisTokenStore;
+
+    // 登录校验
+    @Resource
+    private UserService userService;
 
     /**
      * 配置令牌端点安全约束
@@ -73,7 +79,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         // 认证器
         endpoints.authenticationManager(authenticationManager)
                 // 具体登录的方法
-                .userDetailsService()
+                .userDetailsService(userService)
                 // token 存储的方式：Redis
                 .tokenStore(redisTokenStore);
     }
