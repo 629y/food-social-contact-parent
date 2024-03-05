@@ -47,7 +47,7 @@ public class SignInIdentity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (StrUtil.isNotBlank(this.roles)){
             // 获取数据库中的角色信息
-            Lists.newArrayList();
+//            Lists.newArrayList();
             this.authorities = Stream.of(this.roles.split(",")).map(role -> {
                 return new SimpleGrantedAuthority(role);
             }).collect(Collectors.toList());
