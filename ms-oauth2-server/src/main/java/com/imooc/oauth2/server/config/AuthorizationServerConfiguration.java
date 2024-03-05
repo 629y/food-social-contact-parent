@@ -1,9 +1,12 @@
 package com.imooc.oauth2.server.config;
 
+import com.imooc.commons.model.domain.SignInIdentity;
 import com.imooc.oauth2.server.service.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
@@ -13,6 +16,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.annotation.Resource;
+import java.util.LinkedHashMap;
 
 /**
  * 授权服务
@@ -81,7 +85,19 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 // 具体登录的方法
                 .userDetailsService(userService)
                 // token 存储的方式：Redis
-                .tokenStore(redisTokenStore);
+                .tokenStore(redisTokenStore)
+                // 令牌增强对象，增强返回的结果
+                .tokenEnhancer((accessToken, authentication) -> {
+                    // 获取登录用户的信息，然后设置
+                    SignInIdentity signInIdentity = (SignInIdentity) authentication.getPrincipal();
+                    LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                    map.put("nickname",signInIdentity.getNickname());
+                    map.put("avatarUrl",signInIdentity.getAvatarUrl());
+                    DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) accessToken;
+                    token.setAdditionalInformation(map);
+                    return token;
+                });
+
     }
 
 
