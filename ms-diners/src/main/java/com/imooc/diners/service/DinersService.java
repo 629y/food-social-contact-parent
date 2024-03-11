@@ -4,7 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import com.imooc.commons.constant.ApiConstant;
 import com.imooc.commons.model.domain.ResultInfo;
 import com.imooc.commons.utils.AssertUtil;
+import com.imooc.commons.utils.ResultInfoUtil;
 import com.imooc.diners.config.OAuth2ClientConfiguration;
+import com.imooc.diners.domain.OAuthDinerInfo;
+import com.imooc.diners.vo.LoginDinerInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.LinkedHashMap;
 
 /**
  * 食客服务业务逻辑层
@@ -66,8 +70,16 @@ public class DinersService {
             resultInfo.setData(resultInfo.getMessage());
             return resultInfo;
         }
-        //
-        resultInfo.getData();
+        // 这里的 Data 是一个 LinkedHashMap 转成了域对象 OAuthDinerInfo
+        OAuthDinerInfo dinerInfo = BeanUtil.fillBeanWithMap(
+                (LinkedHashMap) resultInfo.getData(),
+                new OAuthDinerInfo(),false);
+        // 根据业务需求返回视图对象
+        LoginDinerInfo loginDinerInfo = new LoginDinerInfo();
+        loginDinerInfo.setToken(dinerInfo.getAccessToken());
+        loginDinerInfo.setAvatarUrl(dinerInfo.getAvatarUrl());
+        loginDinerInfo.setNickname(dinerInfo.getNickname());
+        return ResultInfoUtil.buildSuccess(path,loginDinerInfo);
     }
 
 

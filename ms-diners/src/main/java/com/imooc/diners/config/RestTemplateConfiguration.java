@@ -16,4 +16,5 @@ public class RestTemplateConfiguration {
     public RedisTemplate redisTemplate(){
         return new RedisTemplate();
     }
+
 }
