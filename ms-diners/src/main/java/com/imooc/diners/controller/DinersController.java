@@ -22,6 +22,12 @@ public class DinersController {
     @Resource
     private HttpServletRequest request;
 
+    /**
+     * 登录
+     * @param account
+     * @param password
+     * @return
+     */
     @GetMapping("signin")
     public ResultInfo signIn(String account, String password){
         return dinersService.signIn(account,password, request.getServletPath());
