@@ -3,10 +3,12 @@ package com.imooc.diners.service;
 import cn.hutool.core.bean.BeanUtil;
 import com.imooc.commons.constant.ApiConstant;
 import com.imooc.commons.model.domain.ResultInfo;
+import com.imooc.commons.model.pojo.Diners;
 import com.imooc.commons.utils.AssertUtil;
 import com.imooc.commons.utils.ResultInfoUtil;
 import com.imooc.diners.config.OAuth2ClientConfiguration;
 import com.imooc.diners.domain.OAuthDinerInfo;
+import com.imooc.diners.mapper.DinersMapper;
 import com.imooc.diners.vo.LoginDinerInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,20 @@ public class DinersService {
 
     @Resource
     private OAuth2ClientConfiguration oAuth2ClientConfiguration;
+
+    @Resource
+    private DinersMapper dinersMapper;
+
+    /**
+     * 校验手机号是否已注册
+     * @param phone
+     */
+    public void checkPhoneIsRegistered(String phone){
+        AssertUtil.isNotEmpty(phone,"手机号不能为空");
+        Diners diners = dinersMapper.selectByPhone(phone);
+        AssertUtil.isTrue(diners == null,"该手机号未注册");
+        AssertUtil.isTrue(diners.getIsValid() == 0,"该用户已锁定，请先解锁");
+    }
 
     /**
      * 登录
@@ -81,18 +97,5 @@ public class DinersService {
         loginDinerInfo.setNickname(dinerInfo.getNickname());
         return ResultInfoUtil.buildSuccess(path,loginDinerInfo);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
