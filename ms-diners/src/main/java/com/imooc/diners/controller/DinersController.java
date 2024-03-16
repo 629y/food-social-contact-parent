@@ -1,6 +1,7 @@
 package com.imooc.diners.controller;
 
 import com.imooc.commons.model.domain.ResultInfo;
+import com.imooc.commons.utils.ResultInfoUtil;
 import com.imooc.diners.service.DinersService;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,17 @@ public class DinersController {
 
     @Resource
     private HttpServletRequest request;
+
+    /**
+     * 校验手机号是否已注册
+     * @param phone
+     * @return
+     */
+    @GetMapping("checkPhone")
+    public ResultInfo checkPhone(String phone){
+        dinersService.checkPhoneIsRegistered(phone);
+        return ResultInfoUtil.buildSuccess(request.getServletPath());
+    }
 
     /**
      * 登录

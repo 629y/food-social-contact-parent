@@ -31,6 +31,7 @@ secure:
       - /auth/oauth/**
       - /diners/signin
       - /diners/send
+      - /diners/checkPhone
 
 # 配置 Eureka Server 注册中心
 eureka:
