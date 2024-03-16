@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Select;
 /**
  * 食客Mapper
  */
-public class DinersMapper {
+public interface DinersMapper {
     //根据手机号查询食客信息
     @Select("select id, username, phone, email, is_vaild " +
             "from t_diners where phone = #{phone}")
