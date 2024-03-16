@@ -1,8 +1,11 @@
 package com.imooc.diners.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import com.imooc.commons.constant.ApiConstant;
 import com.imooc.commons.model.domain.ResultInfo;
+import com.imooc.commons.model.dto.DinersDTO;
 import com.imooc.commons.model.pojo.Diners;
 import com.imooc.commons.utils.AssertUtil;
 import com.imooc.commons.utils.ResultInfoUtil;
@@ -39,6 +42,41 @@ public class DinersService {
 
     @Resource
     private DinersMapper dinersMapper;
+
+    @Resource
+    private SendVerifyCodeService sendVerifyCodeService;
+    /**
+     * 用户注册
+     * @param dinersDTO
+     * @param path
+     * @return
+     */
+    public ResultInfo register(DinersDTO dinersDTO,String path){
+        //1.参数非空校验
+        String username = dinersDTO.getUsername();
+        AssertUtil.isNotEmpty(username,"请输入用户名");
+        String password = dinersDTO.getPassword();
+        AssertUtil.isNotEmpty(password,"请输入密码");
+        String phone = dinersDTO.getPhone();
+        AssertUtil.isNotEmpty(phone,"请输入手机号");
+        String verifyCode = dinersDTO.getVerifyCode();
+        AssertUtil.isNotEmpty(verifyCode,"请输入验证码");
+        //2.验证码一致性校验（验证码是否已过期）
+        String code = sendVerifyCodeService.getCodeByPhone(phone);
+        //    验证码是否过期
+        AssertUtil.isNotEmpty(code,"验证码已过期，请重新发送");
+        //验证码一致性校验
+        AssertUtil.isTrue(!dinersDTO.getVerifyCode().equals(code),"验证码不一致，请重新输入");
+        //3.验证用户名是否已注册
+        Diners diners = dinersMapper.selectByUsername(username.trim());
+        AssertUtil.isTrue(diners !=null,"用户名已存在，请重新输入");
+        //4.注册
+        //  密码加密
+        dinersDTO.setPassword(DigestUtil.md5Hex(password.trim()));
+        dinersMapper.save(dinersDTO);
+        //  自动登录
+        return signIn(username.trim(),password.trim(),path);
+    }
 
     /**
      * 校验手机号是否已注册
