@@ -50,4 +50,13 @@ public class SendVerifyCodeService {
         return StrUtil.isBlank(code) ? true : false;
     }
 
+    /**
+     * 根据手机号获取验证码
+     * @param phone
+     * @return
+     */
+    public String getCodeByPhone(String phone){
+        String key = RedisKeyConstant.verify_code.getKey() + phone;
+        return redisTemplate.opsForValue().get(key);
+    }
 }
