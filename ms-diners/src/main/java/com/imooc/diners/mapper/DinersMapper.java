@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface DinersMapper {
     //根据手机号查询食客信息
-    @Select("select id, username, phone, email, is_vaild " +
+    @Select("select id, username, phone, email, is_valid " +
             "from t_diners where phone = #{phone}")
     Diners selectByPhone(@Param("phone") String phone);
 }
