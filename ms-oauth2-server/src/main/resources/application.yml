@@ -59,3 +59,7 @@ management:
     web:
       exposure:
         include: "*" # 暴露的端点
+
+logging:
+  pattern:
+    console: '%d{2100-01-01 13:14:00.666} [%thread] %-5level %logger{50} - %msg%n'

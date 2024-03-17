@@ -12,3 +12,7 @@ eureka:
     fetch-registry: false
     service-url:
       defaultZone: http://localhost:8080/eureka/
+
+logging:
+  pattern:
+    console: '%d{2100-01-01 13:14:00.666} [%thread] %-5level %logger{50} - %msg%n'
