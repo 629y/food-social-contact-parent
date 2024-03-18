@@ -1,9 +1,7 @@
 package com.imooc.seckill.mapper;
 
 import com.imooc.commons.model.pojo.SeckillVouchers;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 /**
  * 秒杀代金券 Mapper
@@ -22,4 +20,9 @@ public interface SeckillVouchersMapper {
     @Select("select id, fk_voucher_id, amount, start_time, end_time, is_valid " +
             " from t_seckill_vouchers where fk_voucher_id = #{voucherId}")
     SeckillVouchers selectVoucher(Integer vocherId);
+
+    //减库存
+    @Update("update t_seckill_vouchers " +
+            "set amount = amount - 1 where id = #{seckillId}")
+    int stockDecrease(@Param("seckillId") int seckillId);
 }
