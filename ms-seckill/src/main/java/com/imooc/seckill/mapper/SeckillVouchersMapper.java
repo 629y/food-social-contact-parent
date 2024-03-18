@@ -19,7 +19,7 @@ public interface SeckillVouchersMapper {
     // 根据代金券 ID 查询该代金券是否参与抢购活动
     @Select("select id, fk_voucher_id, amount, start_time, end_time, is_valid " +
             " from t_seckill_vouchers where fk_voucher_id = #{voucherId}")
-    SeckillVouchers selectVoucher(Integer vocherId);
+    SeckillVouchers selectVoucher(Integer voucherId);
 
     //减库存
     @Update("update t_seckill_vouchers " +
